@@ -24,6 +24,8 @@ import { SessionContext } from "telegraf/typings/session";
 import {
   start,
   startCreateGiveAway,
+  startGetGiveawaysInfo,
+  startGetInfo,
   startWhatWeather,
 } from "./commands/commands";
 import {
@@ -33,6 +35,8 @@ import {
 import { callbackScene } from "./scenes/callback";
 import { createGiveaway } from "./scenes/giveaway";
 import { giveAwayCallbackScene } from "./scenes/giveawayCallback";
+import { findLogsWithClicks } from "./db/utils";
+import { getGiveawaysInfo } from "./scenes/getGiveawaysInfo";
 // import { session } from "telegraf-session-mongoose";
 // import { Update } from 'telegraf/types'
 // ts-ignore
@@ -46,6 +50,7 @@ export const setupBot = async () => {
     callbackScene,
     createGiveaway,
     giveAwayCallbackScene,
+    getGiveawaysInfo,
   ]);
   // const stage = new Scenes.Stage([
   //   // new Scenes.BaseScene("create", async (ctx: any) => {
@@ -80,15 +85,21 @@ export const setupBot = async () => {
   });
 
   bot.action(/participation (.+)/, async (ctx) => {
-    // console.log("ctx", ctx.callbackQuery.message.message_id);
     return handleGiveAwayCallbackBtnClick(ctx);
+  });
+
+  bot.command(COMMAND_NAMES.GET_INFO, async (ctx) => {
+    return startGetInfo(ctx);
   });
 
   bot.command(COMMAND_NAMES.CREATE_GIVEAWAY, async (ctx: any) => {
     return startCreateGiveAway(ctx);
   });
+
+  bot.command(COMMAND_NAMES.GET_GIVEAWAYS_INFO, async (ctx: any) => {
+    return startGetGiveawaysInfo(ctx);
+  });
   // bot.hears(CMD_TEXT.create, startWhatWeather);
-  // bot.hears(CMD_TEXT.weaterI, startWhatWeather);
   // bot.action(BOT_EVENT_NAMES.create, (ctx) => {
   //   console.log("ctx", ctx);
   //   return startWhatWeather(ctx);

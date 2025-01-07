@@ -1,12 +1,10 @@
-import { Markup, Scenes } from "telegraf";
+import { Format, Markup, Scenes } from "telegraf";
 import { BOT_EVENT_NAMES, SCENE_NAMES } from "../constants";
 import {
   findAllGiveaway,
   findGiveaway,
   getGiveawayItemInfo,
   getGiveawayItemMemberInfo,
-  getMemberCount,
-  // getMemberInfo,
   updateGiveawayMemberInfo,
 } from "../db/models/Giveaway";
 import { getDateDDMMYYYY, getDateTime } from "../utils";
@@ -46,36 +44,40 @@ giveAwayCallbackScene.enter(async (ctx: any) => {
     msgID,
     String(member.user.id)
   );
-  console.log("dbMember", dbMember);
-  console.log("member", member);
+  // console.log("dbMember", dbMember);
+  // console.log("member", member);
   // найти текущий конкурс
   const item = await findGiveaway(msgID);
   // найти количество участников
   const count = item[0].memberInfo.length;
-  console.log("count", count);
-  console.log("item[0].type", item[0].type);
+  // console.log("count", count);
+  // console.log("item[0].type", item[0].type);
 
   const humanDate = getDateTime();
   if (dbMember) {
+    const timeComment = Format.quote(`(${count})Участвуют на ${humanDate}`);
+    const endComment = Format.quote(`Завершение ${item[0].dateTo}`);
+    const newMessage = `${item[0].description}\n${timeComment}\n${endComment}`;
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            Markup.button.callback(
+              "Участвовать",
+              `${BOT_EVENT_NAMES.participation} ${msgID}`
+            ),
+          ],
+        ],
+      },
+    };
     if (item[0].type === "text") {
       try {
         await ctx.telegram.editMessageText(
           process.env.CHAT_ID,
           ctx.callbackQuery.message.message_id,
           null,
-          `${item[0].description}\n(${count})Участвуют на ${humanDate}\nЗавершение ${item[0].dateTo}`,
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  Markup.button.callback(
-                    `Уже участвую`,
-                    `${BOT_EVENT_NAMES.participation} ${msgID}`
-                  ),
-                ],
-              ],
-            },
-          }
+          newMessage,
+          options
         );
       } catch (error) {
         console.log(error);
@@ -86,45 +88,14 @@ giveAwayCallbackScene.enter(async (ctx: any) => {
           process.env.CHAT_ID,
           ctx.callbackQuery.message.message_id,
           null,
-          `${item[0].description}\n(${count})Участвуют на ${humanDate}\nЗавершение ${item[0].dateTo}`,
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  Markup.button.callback(
-                    `Уже участвую`,
-                    `${BOT_EVENT_NAMES.participation} ${msgID}`
-                  ),
-                ],
-              ],
-            },
-          }
+          newMessage,
+          options
         );
       } catch (error) {
         console.log(error);
       }
     }
+  } else {
+    console.log("!!!dbMember");
   }
-  // else {
-  //   try {
-  //     await ctx.telegram.editMessageText(
-  //       process.env.CHAT_ID,
-  //       ctx.callbackQuery.message.message_id,
-  //       "Text",
-  //       `(${count}) Участвуют на ${humanDate}`,
-  //       {
-  //         reply_markup: {
-  //           inline_keyboard: [
-  //             Markup.button.callback(
-  //               `Участвовать`,
-  //               `${BOT_EVENT_NAMES.participation} ${msgID}`
-  //             ),
-  //           ],
-  //         },
-  //       }
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 });
