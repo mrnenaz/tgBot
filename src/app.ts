@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { connectDB, TGPosts, TGLogs } from "./db";
+import { connectDB } from "./db";
 import { setupBot } from "./bot";
 
 (async () => {

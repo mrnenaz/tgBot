@@ -17,16 +17,16 @@ export const COMMANDS = [
     description: "Create",
   },
   {
+    command: COMMAND_NAMES.GET_INFO,
+    description: "Запросить Инфо",
+  },
+  {
     command: COMMAND_NAMES.CREATE_GIVEAWAY,
     description: "Провести конкурс",
   },
   {
     command: COMMAND_NAMES.GET_GIVEAWAYS_INFO,
-    description: "Запросить информацию о конкурсах",
-  },
-  {
-    command: COMMAND_NAMES.GET_INFO,
-    description: "Запросить Инфо",
+    description: "Информация о конкурсах",
   },
 ];
 
@@ -46,7 +46,8 @@ export const BOT_EVENT_NAMES = {
   participation: "participation",
   notParticipation: "notParticipation",
   yes: "yes",
-  no: "no",
+  yes_force: "yes_force",
+  no_force: "no_force",
   back: "back",
   giveaways: {
     all: "all",
@@ -54,6 +55,7 @@ export const BOT_EVENT_NAMES = {
     ended: "ended",
     actions: {
       users: "users",
+      info: "info",
       finally: "finally",
       close: "close",
     },
@@ -67,6 +69,7 @@ export const CMD_TEXT = {
   yes: "Да",
   cansel: "Отмена публикации",
   cansel2: "Отменить",
+  cansel3: "Отмена",
   back: "Назад",
   giveawayPublish: "Опубликовать?",
   giveawaysTexts: {
@@ -75,6 +78,7 @@ export const CMD_TEXT = {
     ended: "Завершенные",
     actions: {
       users: "Участники",
+      info: "Информация",
       finally: "Завершить",
       close: "Закрыть",
     },
@@ -88,3 +92,5 @@ export const SCENE_NAMES = {
   CALLBACK_GIVEAWAY: "callbackgiveaway",
   GET_GIVEAWAYS_INFO: "getgiveawaysinfo",
 };
+
+export const dateMask = /^\d{2}\.\d{2}\.\d{4}$/;

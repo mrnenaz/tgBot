@@ -35,6 +35,7 @@ export interface Giveaway {
   description: string;
   dateTo: string;
   isActive: boolean;
+  winner?: MemberInfo | string | null;
   memberInfo: [MemberInfo] | [];
 }
 
@@ -47,6 +48,7 @@ const TGGiveawaySchema = new Schema<Giveaway>({
   description: String,
   dateTo: String,
   isActive: Boolean,
+  winner: Object || String || null,
   type: String,
   memberInfo: [
     {
@@ -110,13 +112,17 @@ export const getActiveGiveaways = async () =>
 export const getEndedGiveaways = async () =>
   await TGGiveaway.find({ isActive: false });
 
-export const updateGiveaway = async (id: any) => {
+export const updateGiveaway = async (id: any, data: any) => {
   console.log("updateGiveawayMemberInfo", id);
   const date = new Date().toLocaleString("ru-RU");
   console.log("date", date);
   return TGGiveaway.updateOne(
     { messageId: id },
-    { isActive: false, endDate: date }
+    {
+      winner: data.winner,
+      isActive: data.isActive,
+      endDate: date,
+    }
   );
 };
 
