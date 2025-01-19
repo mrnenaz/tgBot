@@ -16,12 +16,15 @@
   "dependencies": {
     "dotenv": "16.4.7",
     "mongoose": "^8.9.2",
+    "node-schedule": "^2.1.1",
+    "random": "^5.1.1",
     "telegraf": "4.16.3",
     "telegraf-session-mongoose": "^2.0.6",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/node": "22.10.2",
+    "@types/node-schedule": "^2.1.7",
     "concurrently": "9.1.0",
     "nodemon": "3.1.9",
     "prettier": "3.4.2",

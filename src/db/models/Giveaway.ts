@@ -19,27 +19,36 @@ type MemberInfo = {
     type: String;
     required: false;
   };
+  isVin: {
+    type: Boolean;
+    required: false;
+  };
 };
 
 export interface Giveaway {
   id: string;
-  // messageId: number;
+  startDate?: string;
+  endDate?: string;
   type: string;
   messageId: string;
   title: string;
   description: string;
   dateTo: string;
   isActive: boolean;
+  winner?: MemberInfo | string | null;
   memberInfo: [MemberInfo] | [];
 }
 
 const TGGiveawaySchema = new Schema<Giveaway>({
   id: String,
+  startDate: String,
+  endDate: String,
   messageId: String,
   title: String,
   description: String,
   dateTo: String,
   isActive: Boolean,
+  winner: Object || String || null,
   type: String,
   memberInfo: [
     {
@@ -47,6 +56,7 @@ const TGGiveawaySchema = new Schema<Giveaway>({
       first_name: String,
       username: String,
       status: String,
+      isVin: Boolean,
     },
   ],
 });
@@ -90,8 +100,33 @@ export const getGiveawayItemMemberInfo = async (msgID: string, id: string) => {
   return member;
 };
 
-export const getMemberCount = async (msgID: string, id: any) =>
+// export const getMemberCount = async (msgID: string, id: any) =>
+//   await TGGiveaway.find({
+//     messageId: msgID,
+//     memberInfo: { $elemMatch: { id: id } },
+//   });
+
+export const getActiveGiveaways = async () =>
+  await TGGiveaway.find({ isActive: true });
+
+export const getEndedGiveaways = async () =>
+  await TGGiveaway.find({ isActive: false });
+
+export const updateGiveaway = async (id: any, data: any) => {
+  console.log("updateGiveawayMemberInfo", id);
+  const date = new Date().toLocaleString("ru-RU");
+  console.log("date", date);
+  return TGGiveaway.updateOne(
+    { messageId: id },
+    {
+      winner: data.winner,
+      isActive: data.isActive,
+      endDate: date,
+    }
+  );
+};
+
+export const getGiveawaInfo = async (msgID: string) =>
   await TGGiveaway.find({
     messageId: msgID,
-    memberInfo: { $elemMatch: { id: id } },
   });
