@@ -1,9 +1,10 @@
+FROM mongo:latest
 FROM node:18-alpine
-WORKDIR /app
+WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
-COPY .env /app/.env
-ENV PORT=3000
-EXPOSE ${PORT}
-CMD ["npm", "dev"]
+COPY .env /usr/src/app/.env
+RUN npm run build
+EXPOSE 3000 27017
+CMD ["npm", "start"]

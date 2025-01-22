@@ -137,14 +137,22 @@ const stepSix = Telegraf.on("text", async (ctx: any) => {
 
 const stepSeven = Telegraf.on("text", async (ctx: any) => {
   console.log("stepSeven");
-  await ctx.reply("Опубликовать?", publicStepBtn);
+  await ctx.reply("Опубликовать?", {
+    reply_markup: {
+      inline_keyboard: [
+        Markup.button.callback("Опубликовать", BOT_EVENT_NAMES.publication),
+        Markup.button.callback("Предпросмотр", BOT_EVENT_NAMES.preview),
+        Markup.button.callback("Cбросить публикацию", BOT_EVENT_NAMES.reset),
+      ],
+    },
+  });
 });
 
 // const stepEight = Telegraf.on("text", async (ctx: any) => {
 //   console.log("stepEight");
 // });
 
-export const whatWeatherNotIScene: any = new Scenes.WizardScene(
+export const createScene: any = new Scenes.WizardScene(
   SCENE_NAMES.CREATE,
   stepTitle,
   stepTwo,
@@ -158,21 +166,21 @@ export const whatWeatherNotIScene: any = new Scenes.WizardScene(
 
 const wizsteps = {};
 
-whatWeatherNotIScene.enter = async (ctx) => {
+createScene.enter = async (ctx) => {
   await ctx.reply("rexff");
 };
 
-whatWeatherNotIScene.action(BOT_EVENT_NAMES.skip, (ctx) => {
+createScene.action(BOT_EVENT_NAMES.skip, (ctx) => {
   // console.log("ctx.wizard", ctx.wizard);
   // return ctx.wizard.next(stepFive, { skip: true });
 });
 
-whatWeatherNotIScene.action(BOT_EVENT_NAMES.addButton, async (ctx) => {
+createScene.action(BOT_EVENT_NAMES.addButton, async (ctx) => {
   ctx.reply("Введите заголовок кнопки");
   return ctx.wizard.next();
 });
 
-whatWeatherNotIScene.action(BOT_EVENT_NAMES.next, async (ctx) => {
+createScene.action(BOT_EVENT_NAMES.next, async (ctx) => {
   console.log("BOT_EVENT_NAMES.next");
   console.log("ctx.wizard.cursor", ctx);
   await ctx.reply(
@@ -192,7 +200,7 @@ whatWeatherNotIScene.action(BOT_EVENT_NAMES.next, async (ctx) => {
   // return ctx.wizard.next();
 });
 
-whatWeatherNotIScene.action(BOT_EVENT_NAMES.publication, async (ctx) => {
+createScene.action(BOT_EVENT_NAMES.publication, async (ctx) => {
   // console.log("ctx.state", ctx.scene.state);
   // ctx.reply("Введите заголовок кнопки");
   // return ctx.wizard.next();
@@ -208,16 +216,18 @@ whatWeatherNotIScene.action(BOT_EVENT_NAMES.publication, async (ctx) => {
     },
   });
   console.log("ctx.scene.state.post", ctx.scene.state.post);
-  insertPost(ctx.scene.state.post);
+  await insertPost(ctx.scene.state.post);
+  ctx.reply("Добавлено!");
+  return ctx.scene.leave();
 });
 
-whatWeatherNotIScene.action(BOT_EVENT_NAMES.cancel, (ctx) => {
+createScene.action(BOT_EVENT_NAMES.cancel, (ctx) => {
   console.log("BOT_EVENT_NAMES.cancel");
   ctx.reply("Публикация отменена");
   return ctx.scene.leave();
 });
 
-whatWeatherNotIScene.action(/send (.+)/, async (ctx) => {
+createScene.action(/send (.+)/, async (ctx) => {
   console.log("send");
   const useHasAccess = await channelAccessCheck(ctx);
   if (useHasAccess) {
@@ -276,16 +286,20 @@ whatWeatherNotIScene.action(/send (.+)/, async (ctx) => {
   }
 });
 
-// whatWeatherNotIScene.action(BOT_EVENT_NAMES.createPostBtn, async (ctx) => {
+createScene.leave(async (ctx) => {
+  return ctx.scene.leave();
+});
+
+// createScene.action(BOT_EVENT_NAMES.createPostBtn, async (ctx) => {
 //   ctx.reply("Кнопка создана и будет добавлена к посту");
 //   // return ctx.reply("Добавить кнопку к посту?", createPostBtn);
 //   // ctx.wizard.selectStep();
 //   // ctx.action(BOT_EVENT_NAMES.createPostBtn);
 //   // return ctx.wizard.selectStep([ctx.wizard.cursor - 1]);
-//   whatWeatherNotIScene.reenter();
+//   createScene.reenter();
 // });
 
-// whatWeatherNotIScene.on("text", (ctx) => {
+// createScene.on("text", (ctx) => {
 //   console.log("ctx.message", ctx.message);
 // });
 // export const createScene = new Scenes.WizardScene(SCENE_NAMES.CREATE);

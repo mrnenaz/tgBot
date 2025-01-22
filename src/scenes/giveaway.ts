@@ -60,8 +60,10 @@ const stepThree = Telegraf.on("text", async (ctx: any) => {
   if (dateMask.test(ctx.message.text.replace(/\,/g, "."))) {
     console.log("Дата соответствует маске");
     // ctx.sendMessage("Дата соответствует маске");
+    console.log("Дата", ctx.message.text);
+    const tempDate = ctx.message.text.replace(/\,/g, ".");
     ctx.scene.state.giveaway.dateTo = new Date(
-      ctx.message.text.replace(/\,/g, ".")
+      tempDate.replace(/(\d{2}).(\d{2}).(\d{4})/g, "$3-$2-$1")
     );
     ctx.reply(
       "Конкурс запустится сразу после публикации",

@@ -20,7 +20,6 @@ giveAwayCallbackScene.enter(async (ctx: any) => {
   const member = await ctx.getChatMember(ctx.from.id);
   // найти текущий конкурс
   const item = await findGiveaway(msgID);
-
   // есть ли текущий пользователь в списке участников в текущем конкурсе
   const hasMember = await getGiveawayItemInfo(msgID, member.user.id);
   console.log("hasMember", hasMember);
@@ -75,18 +74,14 @@ giveAwayCallbackScene.enter(async (ctx: any) => {
       String(member.user.id)
     );
 
+    // обновить данные о конкурсе после добавления участника
+    const itemUPD = await findGiveaway(msgID);
     // найти количество участников
-    const count = item[0].memberInfo.length;
+    const count = itemUPD[0].memberInfo.length;
 
     const humanDate = getDateTime();
     if (dbMember) {
-      const timeComment = Format.quote(`(${count})Участвуют на ${humanDate}`);
-      const endComment = Format.quote(`Завершение ${item[0].dateTo}`);
-      const newMessage = Format.fmt([
-        `${item[0].description}\n`,
-        `${timeComment}\n`,
-        `${endComment}`,
-      ]);
+      const newMessage = `${itemUPD[0].description}\n(${count})Участвуют на ${humanDate}\nЗавершение ${itemUPD[0].dateTo}`;
       // ctx.reply(
       //   Format.fmt(
       //     [
@@ -108,8 +103,9 @@ giveAwayCallbackScene.enter(async (ctx: any) => {
             ],
           ],
         },
+        parse_mode: "HTML",
       };
-      if (item[0].type === "text") {
+      if (itemUPD[0].type === "text") {
         try {
           await ctx.telegram.editMessageText(
             process.env.CHAT_ID,
@@ -121,7 +117,7 @@ giveAwayCallbackScene.enter(async (ctx: any) => {
         } catch (error) {
           console.log(error);
         }
-      } else if (item[0].type === "photo") {
+      } else if (itemUPD[0].type === "photo") {
         try {
           await ctx.telegram.editMessageCaption(
             process.env.CHAT_ID,

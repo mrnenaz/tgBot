@@ -1,6 +1,5 @@
 import { Telegraf, Markup, Scenes, Context, session } from "telegraf";
-import { COMMANDS, COMMAND_NAMES } from "./constants";
-import { whatWeatherNotIScene } from "./scenes/create";
+import { createScene } from "./scenes/create";
 import {
   start,
   startCreateGiveAway,
@@ -11,21 +10,25 @@ import {
 import {
   handleCallbackBtnClick,
   handleGiveAwayCallbackBtnClick,
+  handlePostStat,
 } from "./commands/actions";
 import { callbackScene } from "./scenes/callback";
 import { createGiveaway } from "./scenes/giveaway";
 import { giveAwayCallbackScene } from "./scenes/giveawayCallback";
 import { getGiveawaysInfo } from "./scenes/getGiveawaysInfo";
+import { postStatScene } from "./scenes/postStat";
+import { COMMAND_NAMES, COMMANDS } from "./constants";
 // import schedule from "node-schedule";
 
 export const setupBot = async () => {
   const bot = new Telegraf(process.env.WebAppsNenazBot);
   const stage = new Scenes.Stage<any>([
-    whatWeatherNotIScene,
+    createScene,
     callbackScene,
     createGiveaway,
     giveAwayCallbackScene,
     getGiveawaysInfo,
+    postStatScene,
   ]);
   bot.telegram.setMyCommands(COMMANDS);
 
@@ -60,6 +63,10 @@ export const setupBot = async () => {
 
   bot.command(COMMAND_NAMES.GET_GIVEAWAYS_INFO, async (ctx: any) => {
     return startGetGiveawaysInfo(ctx);
+  });
+
+  bot.action(/get_post_stat (.+)/, async (ctx) => {
+    return handlePostStat(ctx);
   });
 
   // const channel = -1002187274257;

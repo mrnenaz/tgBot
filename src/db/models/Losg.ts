@@ -26,3 +26,16 @@ const TGLogsSchema = new Schema({
 });
 
 export const TGLogs = mongoose.model("TGLogs", TGLogsSchema);
+
+export const findLogs = async (id) =>
+  TGLogs.find({
+    [`buttons.${id}`]: {
+      $exists: true,
+    },
+  });
+
+export const findLogsById = async (id) => {
+  const findResult = await TGLogs.findOne({ id });
+  console.log("findResult", findResult);
+  return findResult;
+};

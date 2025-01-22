@@ -91,6 +91,7 @@ export const SCENE_NAMES = {
   CREATE_GIVEAWAY: "creategiveaway",
   CALLBACK_GIVEAWAY: "callbackgiveaway",
   GET_GIVEAWAYS_INFO: "getgiveawaysinfo",
+  POST_STAT: "poststat",
 };
 
 export const dateMask = /^\d{2}\.\d{2}\.\d{4}$/;

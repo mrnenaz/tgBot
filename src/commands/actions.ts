@@ -7,3 +7,7 @@ export const handleCallbackBtnClick = (ctx: any) => {
 export const handleGiveAwayCallbackBtnClick = (ctx: any) => {
   return ctx.scene.enter(SCENE_NAMES.CALLBACK_GIVEAWAY);
 };
+
+export const handlePostStat = (ctx: any) => {
+  return ctx.scene.enter(SCENE_NAMES.POST_STAT);
+};
